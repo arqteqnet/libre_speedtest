@@ -1,8 +1,5 @@
 A docker version of Original LibreSpeed is available on docker hub: [https://hub.docker.com/r/mikedye0511/speedtest/](https://hub.docker.com/r/mikedye0511/speedtest/)
 
-The Github Original LibreSpeed Project is: [https://github.com/librespeed/speedtest](https://github.com/librespeed/speedtest)
-
-
 My Updated Version of SpeedTest is available on docker hub: [https://hub.docker.com/repository/docker/mikedye0511/speedtest/](https://hub.docker.com/repository/docker/mikedye0511/speedtest/)
 
 ## Downloading from Docker hub
@@ -109,6 +106,15 @@ In frontend mode, LibreSpeed serves clients the Web UI and a list of servers. To
             "pingURL" :"empty.php",
             "getIpURL" :"getIP.php"
         },
+        {
+            "name": "Friendly name for Server 2",
+            "server" :"https://server2.mydomain.com/",
+            "dlURL" :"garbage.php",
+            "ulURL" :"empty.php",
+            "pingURL" :"empty.php",
+            "getIpURL" :"getIP.php"
+        },
+        ...more servers...
     ]
     ```
     Note: if a server only supports HTTP or HTTPS, specify the protocol in the server field. If it supports both, just use `//`.

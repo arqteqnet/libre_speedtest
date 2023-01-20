@@ -1,0 +1,10 @@
+[
+    {
+        "name": "HTTP Server 1",
+        "server" :"http://speedtest.demo.com:8080/",
+        "dlURL" :"garbage.php",
+        "ulURL" :"empty.php",
+        "pingURL" :"empty.php",
+        "getIpURL" :"getIP.php"
+    }
+]
