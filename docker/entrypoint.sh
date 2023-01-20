@@ -91,7 +91,10 @@ if [ "$SSLPORT" != "443" ]; then
 fi
 
 if [ "$SSL" != "false" ]; then
-  ln -s /etc/apache2/sites-available/default-ssl.conf /etc/apache2/sites-enabled/default-ssl.conf
+
+  if [ ! -f /etc/apache2/sites-enabled/default-ssl.conf ]; then
+    ln -s /etc/apache2/sites-available/default-ssl.conf /etc/apache2/sites-enabled/default-ssl.conf
+  fi
 
   if [ "$CUSTOM_CERTS" == "false" ]; then
     openssl req -x509 -newkey rsa:4096 -keyout /etc/ssl/private/private_crt.key -out /etc/ssl/certs/public_crt.pem -days 10000 -nodes -config /req.conf -extensions 'v3_req'
