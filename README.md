@@ -1,5 +1,7 @@
 A docker version of Original LibreSpeed is available on docker hub: [https://hub.docker.com/r/mikedye0511/speedtest/](https://hub.docker.com/r/mikedye0511/speedtest/)
 
+The Github Original LibreSpeed Project is: [https://github.com/librespeed/speedtest](https://github.com/librespeed/speedtest)
+
 My Updated Version of SpeedTest is available on docker hub: [https://hub.docker.com/repository/docker/mikedye0511/speedtest/](https://hub.docker.com/repository/docker/mikedye0511/speedtest/)
 
 ## Downloading from Docker hub
