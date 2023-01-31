@@ -1,5 +1,5 @@
 <?php
-
+require 'cors.php';
 /*
  * This script detects the client's IP address and fetches ISP info from ipinfo.io/
  * Output from this script is a JSON string composed of 2 objects: a string called processedString which contains the combined IP, ISP, Country and distance as it can be presented to the user; and an object called rawIspInfo which contains the raw data from ipinfo.io (will be empty if isp detection is disabled).
@@ -12,50 +12,34 @@ define('API_KEY_FILE', 'getIP_ipInfo_apikey.php');
 define('SERVER_LOCATION_CACHE_FILE', 'getIP_serverLocation.php');
 
 require_once 'getIP_util.php';
+require_once 'ip_config.php';
 
 /**
  * @param string $ip
  *
  * @return string|null
  */
-function getLocalOrPrivateIpInfo($ip)
+function cidr_match($ip, $range)
 {
-    // ::1/128 is the only localhost ipv6 address. there are no others, no need to strpos this
-    if ('::1' === $ip) {
-        return 'localhost IPv6 access';
+    list ($subnet, $bits) = explode('/', $range);
+    if ($bits === null) {
+        $bits = 32;
     }
+    $ip = ip2long($ip);
+    $subnet = ip2long($subnet);
+    $mask = -1 << (32 - $bits);
+    $subnet &= $mask;
+    return ($ip & $mask) == $subnet;
+}
 
-    // simplified IPv6 link-local address (should match fe80::/10)
-    if (stripos($ip, 'fe80:') === 0) {
-        return 'link-local IPv6 access';
-    }
-
-    // anything within the 127/8 range is localhost ipv4, the ip must start with 127.0
-    if (strpos($ip, '127.') === 0) {
-        return 'localhost IPv4 access';
-    }
-
-    // 10/8 private IPv4
-    if (strpos($ip, '10.') === 0) {
-        return 'private IPv4 access';
-    }
-
-    // 172.16/12 private IPv4
-    if (preg_match('/^172\.(1[6-9]|2\d|3[01])\./', $ip) === 1) {
-        return 'private IPv4 access';
-    }
-
-    // 192.168/16 private IPv4
-    if (strpos($ip, '192.168.') === 0) {
-        return 'private IPv4 access';
-    }
-
-    // IPv4 link-local
-    if (strpos($ip, '169.254.') === 0) {
-        return 'link-local IPv4 access';
-    }
-
-    return null;
+function getLocalOrPrivateIpInfo($ip) 
+{
+      
+    foreach($GLOBALS['ranges'] as $range => $desc){ 
+        if (cidr_match($ip, $range)) {
+            return $desc;
+        }
+    } 
 }
 
 /**
@@ -261,12 +245,12 @@ function calculateDistance($clientLocation, $serverLocation, $unit)
 function sendHeaders()
 {
     header('Content-Type: application/json; charset=utf-8');
-
+/*
     if (isset($_GET['cors'])) {
         header('Access-Control-Allow-Origin: *');
         header('Access-Control-Allow-Methods: GET, POST');
     }
-
+*/
     header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0, s-maxage=0');
     header('Cache-Control: post-check=0, pre-check=0', false);
     header('Pragma: no-cache');

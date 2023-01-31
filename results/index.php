@@ -5,6 +5,7 @@ require_once 'telemetry_db.php';
 error_reporting(0);
 putenv('GDFONTPATH='.realpath('.'));
 
+
 /**
  * @param string $name
  *
@@ -56,17 +57,17 @@ function formatSpeedtestDataForImage($speedtest)
     $speedtest['timestamp'] = $speedtest['timestamp'];
 
     $ispinfo = json_decode($speedtest['ispinfo'], true)['processedString'];
-    $dash = strpos($ispinfo, '-');
-    if ($dash !== false) {
-        $ispinfo = substr($ispinfo, $dash + 2);
-        $par = strrpos($ispinfo, '(');
-        if ($par !== false) {
-            $ispinfo = substr($ispinfo, 0, $par);
-        }
-    } else {
-        $ispinfo = '';
-    }
-
+/**    $dash = strpos($ispinfo, '-');
+ *   if ($dash !== false) {
+ *       $ispinfo = substr($ispinfo, $dash + 2);
+ *       $par = strrpos($ispinfo, '(');
+ *       if ($par !== false) {
+ *           $ispinfo = substr($ispinfo, 0, $par);
+ *       }
+ *   } else {
+ *       $ispinfo = '';
+ *   }
+ */
     $speedtest['ispinfo'] = $ispinfo;
 
     return $speedtest;
@@ -87,12 +88,13 @@ function drawImage($speedtest)
     $jit = $data['jitter'];
     $ispinfo = $data['ispinfo'];
     $timestamp = $data['timestamp'];
+    $server = json_decode($data['extra'], true)['server'];
 
     // initialize the image
     $SCALE = 1.25;
     $SMALL_SEP = 8 * $SCALE;
     $WIDTH = 400 * $SCALE;
-    $HEIGHT = 229 * $SCALE;
+    $HEIGHT = 250 * $SCALE;
     $im = imagecreatetruecolor($WIDTH, $HEIGHT);
     $BACKGROUND_COLOR = imagecolorallocate($im, 255, 255, 255);
 
@@ -112,6 +114,9 @@ function drawImage($speedtest)
     $FONT_ISP = tryFont('OpenSans-Semibold');
     $FONT_ISP_SIZE = 9 * $SCALE;
 
+    $FONT_SERVER = tryFont('OpenSans-Semibold');
+    $FONT_SERVER_SIZE = 9 * $SCALE;
+
     $FONT_TIMESTAMP = tryFont("OpenSans-Light");
     $FONT_TIMESTAMP_SIZE = 8 * $SCALE;
 
@@ -126,6 +131,7 @@ function drawImage($speedtest)
     $TEXT_COLOR_UL_METER = imagecolorallocate($im, 96, 96, 96);
     $TEXT_COLOR_MEASURE = imagecolorallocate($im, 40, 40, 40);
     $TEXT_COLOR_ISP = imagecolorallocate($im, 40, 40, 40);
+    $TEXT_COLOR_SERVER = imagecolorallocate($im, 40, 40, 40);
     $SEPARATOR_COLOR = imagecolorallocate($im, 192, 192, 192);
     $TEXT_COLOR_TIMESTAMP = imagecolorallocate($im, 160, 160, 160);
     $TEXT_COLOR_WATERMARK = imagecolorallocate($im, 160, 160, 160);
@@ -154,12 +160,15 @@ function drawImage($speedtest)
     $POSITION_X_ISP = 4 * $SCALE;
     $POSITION_Y_ISP = 205 * $SCALE;
 
-    $SEPARATOR_Y = 211 * $SCALE;
+    $POSITION_X_SERVER = 4 * $SCALE;
+    $POSITION_Y_SERVER = 220 * $SCALE;
+
+    $SEPARATOR_Y = 226 * $SCALE;
 
     $POSITION_X_TIMESTAMP= 4 * $SCALE;
-    $POSITION_Y_TIMESTAMP = 223 * $SCALE;
+    $POSITION_Y_TIMESTAMP = 238 * $SCALE;
 
-    $POSITION_Y_WATERMARK = 223 * $SCALE;
+    $POSITION_Y_WATERMARK = 238 * $SCALE;
 
     // configure labels
     $MBPS_TEXT = 'Mbps';
@@ -168,7 +177,7 @@ function drawImage($speedtest)
     $JIT_TEXT = 'Jitter';
     $DL_TEXT = 'Download';
     $UL_TEXT = 'Upload';
-    $WATERMARK_TEXT = 'LibreSpeed';
+    $WATERMARK_TEXT = getenv('TITLE');
 
     // create text boxes for each part of the image
     $mbpsBbox = imageftbbox($FONT_MEASURE_SIZE_BIG, 0, $FONT_MEASURE, $MBPS_TEXT);
@@ -204,6 +213,8 @@ function drawImage($speedtest)
     imagefttext($im, $FONT_MEASURE_SIZE_BIG, 0, $POSITION_X_UL - $mbpsBbox[4] / 2, $POSITION_Y_UL_MEASURE, $TEXT_COLOR_MEASURE, $FONT_MEASURE, $MBPS_TEXT);
     // isp
     imagefttext($im, $FONT_ISP_SIZE, 0, $POSITION_X_ISP, $POSITION_Y_ISP, $TEXT_COLOR_ISP, $FONT_ISP, $ispinfo);
+    // server
+    imagefttext($im, $FONT_SERVER_SIZE, 0, $POSITION_X_SERVER, $POSITION_Y_SERVER, $TEXT_COLOR_SERVER, $FONT_SERVER, "Test Server: {$server}");
     // separator
     imagefilledrectangle($im, 0, $SEPARATOR_Y, $WIDTH, $SEPARATOR_Y, $SEPARATOR_COLOR);
     // timestamp

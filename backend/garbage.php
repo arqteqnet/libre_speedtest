@@ -1,5 +1,5 @@
 <?php
-
+require 'cors.php';
 // Disable Compression
 @ini_set('zlib.output_compression', 'Off');
 @ini_set('output_buffering', 'Off');
@@ -31,12 +31,12 @@ function getChunkCount()
 function sendHeaders()
 {
     header('HTTP/1.1 200 OK');
-
+/*
     if (isset($_GET['cors'])) {
         header('Access-Control-Allow-Origin: *');
         header('Access-Control-Allow-Methods: GET, POST');
     }
-
+*/
     // Indicate a file download
     header('Content-Description: File Transfer');
     header('Content-Type: application/octet-stream');

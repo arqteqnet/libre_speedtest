@@ -1,8 +1,7 @@
 /*
 	LibreSpeed - Worker
-	by Federico Dossena
-	https://github.com/librespeed/speedtest/
-	GNU LGPLv3 License
+	https://github.com/arqteqnet/libre_speedtest
+	Fork of source code: https://github.com/librespeed/speedtest/
 */
 
 // data reported to main thread
