@@ -55,7 +55,7 @@ function formatSpeedtestDataForImage($speedtest)
     $speedtest['ping'] = format($speedtest['ping']);
     $speedtest['jitter'] = format($speedtest['jitter']);
     $speedtest['timestamp'] = $speedtest['timestamp'];
-
+    $speedtest['ip'] = $speedtest['ip'];
     $ispinfo = json_decode($speedtest['ispinfo'], true)['processedString'];
 /**    $dash = strpos($ispinfo, '-');
  *   if ($dash !== false) {
@@ -86,6 +86,7 @@ function drawImage($speedtest)
     $ul = $data['ul'];
     $ping = $data['ping'];
     $jit = $data['jitter'];
+    $originip = $data['ip'];
     $ispinfo = $data['ispinfo'];
     $timestamp = $data['timestamp'];
     $server = json_decode($data['extra'], true)['server'];
@@ -94,7 +95,7 @@ function drawImage($speedtest)
     $SCALE = 1.25;
     $SMALL_SEP = 8 * $SCALE;
     $WIDTH = 400 * $SCALE;
-    $HEIGHT = 250 * $SCALE;
+    $HEIGHT = 270 * $SCALE;
     $im = imagecreatetruecolor($WIDTH, $HEIGHT);
     $BACKGROUND_COLOR = imagecolorallocate($im, 255, 255, 255);
 
@@ -114,6 +115,9 @@ function drawImage($speedtest)
     $FONT_ISP = tryFont('OpenSans-Semibold');
     $FONT_ISP_SIZE = 9 * $SCALE;
 
+    $FONT_ORIGIN_IP = tryFont('OpenSans-Semibold');
+    $FONT_ORIGIN_IP_SIZE = 9 * $SCALE;
+
     $FONT_SERVER = tryFont('OpenSans-Semibold');
     $FONT_SERVER_SIZE = 9 * $SCALE;
 
@@ -131,6 +135,7 @@ function drawImage($speedtest)
     $TEXT_COLOR_UL_METER = imagecolorallocate($im, 96, 96, 96);
     $TEXT_COLOR_MEASURE = imagecolorallocate($im, 40, 40, 40);
     $TEXT_COLOR_ISP = imagecolorallocate($im, 40, 40, 40);
+    $TEXT_COLOR_ORIGIN_IP = imagecolorallocate($im, 40, 40, 40);
     $TEXT_COLOR_SERVER = imagecolorallocate($im, 40, 40, 40);
     $SEPARATOR_COLOR = imagecolorallocate($im, 192, 192, 192);
     $TEXT_COLOR_TIMESTAMP = imagecolorallocate($im, 160, 160, 160);
@@ -160,15 +165,18 @@ function drawImage($speedtest)
     $POSITION_X_ISP = 4 * $SCALE;
     $POSITION_Y_ISP = 205 * $SCALE;
 
-    $POSITION_X_SERVER = 4 * $SCALE;
-    $POSITION_Y_SERVER = 220 * $SCALE;
+    $POSITION_X_ORIGIN_IP = 4 * $SCALE;
+    $POSITION_Y_ORIGIN_IP = 220 * $SCALE;
 
-    $SEPARATOR_Y = 226 * $SCALE;
+    $POSITION_X_SERVER = 4 * $SCALE;
+    $POSITION_Y_SERVER = 235 * $SCALE;
+
+    $SEPARATOR_Y = 237 * $SCALE;
 
     $POSITION_X_TIMESTAMP= 4 * $SCALE;
-    $POSITION_Y_TIMESTAMP = 238 * $SCALE;
+    $POSITION_Y_TIMESTAMP = 248 * $SCALE;
 
-    $POSITION_Y_WATERMARK = 238 * $SCALE;
+    $POSITION_Y_WATERMARK = 248 * $SCALE;
 
     // configure labels
     $MBPS_TEXT = 'Mbps';
@@ -178,6 +186,7 @@ function drawImage($speedtest)
     $DL_TEXT = 'Download';
     $UL_TEXT = 'Upload';
     $WATERMARK_TEXT = getenv('TITLE');
+    $ORIGIN_IP = getenv('ENABLE_ORIGIN_IP_LOG');
 
     // create text boxes for each part of the image
     $mbpsBbox = imageftbbox($FONT_MEASURE_SIZE_BIG, 0, $FONT_MEASURE, $MBPS_TEXT);
@@ -212,7 +221,11 @@ function drawImage($speedtest)
     imagefttext($im, $FONT_METER_SIZE_BIG, 0, $POSITION_X_UL - $ulMeterBbox[4] / 2, $POSITION_Y_UL_METER, $TEXT_COLOR_UL_METER, $FONT_METER, $ul);
     imagefttext($im, $FONT_MEASURE_SIZE_BIG, 0, $POSITION_X_UL - $mbpsBbox[4] / 2, $POSITION_Y_UL_MEASURE, $TEXT_COLOR_MEASURE, $FONT_MEASURE, $MBPS_TEXT);
     // isp
-    imagefttext($im, $FONT_ISP_SIZE, 0, $POSITION_X_ISP, $POSITION_Y_ISP, $TEXT_COLOR_ISP, $FONT_ISP, $ispinfo);
+    imagefttext($im, $FONT_ISP_SIZE, 0, $POSITION_X_ISP, $POSITION_Y_ISP, $TEXT_COLOR_ISP, $FONT_ISP, "ISP Info: {$ispinfo}");
+    // originip
+    if ($ORIGIN_IP == "true") {
+    imagefttext($im, $FONT_ORIGIN_IP_SIZE, 0, $POSITION_X_ORIGIN_IP, $POSITION_Y_ORIGIN_IP, $TEXT_COLOR_ORIGIN_IP, $FONT_ORIGIN_IP, "Origin IP: {$originip}");
+    }
     // server
     imagefttext($im, $FONT_SERVER_SIZE, 0, $POSITION_X_SERVER, $POSITION_Y_SERVER, $TEXT_COLOR_SERVER, $FONT_SERVER, "Test Server: {$server}");
     // separator
