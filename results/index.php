@@ -186,7 +186,6 @@ function drawImage($speedtest)
     $DL_TEXT = 'Download';
     $UL_TEXT = 'Upload';
     $WATERMARK_TEXT = getenv('TITLE');
-    $ORIGIN_IP = getenv('ENABLE_ORIGIN_IP_LOG');
 
     // create text boxes for each part of the image
     $mbpsBbox = imageftbbox($FONT_MEASURE_SIZE_BIG, 0, $FONT_MEASURE, $MBPS_TEXT);
@@ -223,9 +222,7 @@ function drawImage($speedtest)
     // isp
     imagefttext($im, $FONT_ISP_SIZE, 0, $POSITION_X_ISP, $POSITION_Y_ISP, $TEXT_COLOR_ISP, $FONT_ISP, "ISP Info: {$ispinfo}");
     // originip
-    if ($ORIGIN_IP == "true") {
     imagefttext($im, $FONT_ORIGIN_IP_SIZE, 0, $POSITION_X_ORIGIN_IP, $POSITION_Y_ORIGIN_IP, $TEXT_COLOR_ORIGIN_IP, $FONT_ORIGIN_IP, "Origin IP: {$originip}");
-    }
     // server
     imagefttext($im, $FONT_SERVER_SIZE, 0, $POSITION_X_SERVER, $POSITION_Y_SERVER, $TEXT_COLOR_SERVER, $FONT_SERVER, "Test Server: {$server}");
     // separator
